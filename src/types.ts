@@ -2,6 +2,11 @@ export interface NewMatchFormProps {
     onSubmit: (match: MatchImpl) => void;
     onCancel: () => void;
   }
+export interface UpdateMatchFormProps {
+    match:MatchImpl,
+    onSubmit: (match: MatchImpl) => void;
+    onCancel: () => void;
+  }
 export interface ScoreboardProps {
     match: MatchImpl;
     finishMatch: () => void;
