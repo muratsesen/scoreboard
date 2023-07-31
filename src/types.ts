@@ -16,7 +16,7 @@ export interface ScoreboardProps {
   export interface Match {
     homeTeam: Team;
     awayTeam: Team;
-    startDateTime: Date;
+    startDateTime?: Date;
   }
   export interface Team {
     name: string;
@@ -24,17 +24,17 @@ export interface ScoreboardProps {
   }
   export class MatchImpl implements Match {
     public homeTeam: Team;
-      public awayTeam: Team;
-      public startDateTime: Date;
+    public awayTeam: Team;
+    public startDateTime: Date;
    
     constructor(
       homeTeam: Team,
       awayTeam: Team,
-      startDateTime: Date
+      startDateTime?: Date
     ) {
       this.homeTeam = homeTeam;
       this.awayTeam = awayTeam;
-      this.startDateTime = startDateTime; 
+      this.startDateTime = startDateTime || new Date(); 
     }
   
     totalScore(): number {

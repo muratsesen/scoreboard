@@ -32,6 +32,34 @@ describe('App', () => {
 
     expect(newMatchForm).toBeInTheDocument();
   })
+  test('renders "Summary" button',()=>{
+    render(<App />);
+    const summaryButton = screen.getByText("Show Summary");
+    expect(summaryButton).toBeInTheDocument();
+  })
+
+  test('opens summary when "Summary" button is clicked', async () => {
+    render(<App />);
+    const summaryButton = screen.getByText(/Summary/i);
+    act(() => {
+      summaryButton.click();
+    });
+    const summary = await screen.findByText("Summary");
+
+    expect(summary).toBeInTheDocument();
+  })
+
+  xtest('disable "Start Match" when there is a ongoing match',()=>{
+    render(<App />);
+    const startMatchButton = screen.getByText(/Start Match/i);
+    act(() => {
+      startMatchButton.click();
+    });
+    const newMatchForm = screen.getByText(/New Match/i);
+    expect(startMatchButton).toBeDisabled();
+    
+
+  })
 })
 
 describe('New match form', () => {
@@ -105,7 +133,7 @@ describe('New match form', () => {
           name: 'Away Team B',
           score: 0
         },
-        startDateTime: new Date('2011-11-11T12:00:00.000Z')
+        startDateTime: new Date("1970-01-01T00:00:00.000Z")
       });
 
     })
