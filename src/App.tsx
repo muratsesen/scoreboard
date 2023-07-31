@@ -1,5 +1,5 @@
 import React from 'react';
-import { MatchImpl, NewMatchFormProps, ScoreboardProps } from './types';
+import { MatchImpl, NewMatchFormProps, ScoreboardProps, Team, UpdateMatchFormProps } from './types';
 
 function App() {
   const [showNewMatchForm, setShowNewMatchForm] = React.useState(false)
@@ -76,5 +76,30 @@ export function Scoreboard({ match, finishMatch, updateMatch }: ScoreboardProps)
   );
 }
 
+export function UpdateMatchForm({ onSubmit, onCancel,match }: UpdateMatchFormProps) {
+  const [homeTeam, setHomeTeam] = React.useState<Team>(match.homeTeam)
+  const [awayTeam, setAwayTeam] = React.useState<Team>(match.awayTeam)
 
+  function submitMatch() {
+   
+
+    const exampleMatch: MatchImpl = new MatchImpl(homeTeam, awayTeam,match.startDateTime );
+
+    onSubmit(exampleMatch);
+  }
+
+  return (
+    <div>
+      <h2>Update Match</h2>
+      <label htmlFor="homeTeam">{homeTeam.name}:
+        <input placeholder='homeTeamScore' value={homeTeam.score} onChange={(e) => setHomeTeam(prev=>({name:homeTeam.name,score:parseInt(e.target.value)}))} type="text" id="homeTeam" /></label>
+
+      <label htmlFor="awayTeam">{awayTeam.name}:
+        <input placeholder='awayTeamScore' value={awayTeam.score} onChange={(e) => setAwayTeam(prev=>({...prev,score:parseInt(e.target.value)}))} type="text" id="awayTeam" /></label>
+
+      <button onClick={submitMatch} >Submit</button>
+      <button onClick={onCancel}>Cancel</button>
+    </div>
+  )
+}
 export default App;

@@ -1,6 +1,6 @@
 import React from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
-import App, { NewMatchForm, Scoreboard } from './App';
+import App, { NewMatchForm, Scoreboard, UpdateMatchForm } from './App';
 import { act } from 'react-dom/test-utils';
 import { unmountComponentAtNode } from 'react-dom';
 
@@ -167,8 +167,76 @@ describe('Scoreboard', () => {
 
       fireEvent.click(updateMatchButton);
       expect(mockUpdateMatch).toHaveBeenCalled();
-    
+
     })
   })
 
 })
+
+describe('UpdateMatchForm', () => {
+  const exampleMatch = {
+    homeTeam: { name: 'England', score: 3 },
+    awayTeam: { name: 'Finland', score: 2 },
+    startDateTime: new Date('2011-11-11T12:00:00.000Z')
+  };
+  const exampleUpdatedMatch = {
+    homeTeam: { name: 'England', score: 3 },
+    awayTeam: { name: 'Finland', score: 3 },
+    startDateTime: new Date('2011-11-11T12:00:00.000Z')
+  };
+
+  const onCancelMock = jest.fn();
+  const onSubmitMock = jest.fn();
+  const mockFinishMatch = jest.fn();
+  const mockUpdateMatch = jest.fn();
+  beforeEach(() => {
+    render(<UpdateMatchForm match={exampleMatch} onSubmit={onSubmitMock} onCancel={onCancelMock} />);
+  })
+
+  describe('layout', () => {
+
+    test('should renders correct team names and scores', () => {
+      const homeTeamLabel = screen.getByText('England:');
+      const homeTeamScore = screen.queryByPlaceholderText('homeTeamScore');
+      const awayTeamLabel = screen.getByText('Finland:');
+      const awayTeamScore = screen.queryByPlaceholderText('awayTeamScore');
+
+      expect(homeTeamLabel).toBeInTheDocument();
+      expect(homeTeamScore).toBeInTheDocument();
+      expect(awayTeamLabel).toBeInTheDocument();
+      expect(awayTeamScore).toBeInTheDocument();
+    })
+    test('should contain Submit  button', () => {
+      const submitButton = screen.getByText(/Submit/i);
+      expect(submitButton).toBeInTheDocument();
+    })
+    test('should contain Cancel button', () => {
+      const cancelButton = screen.getByText(/Cancel/i);
+      expect(cancelButton).toBeInTheDocument();
+    })
+  })
+
+  describe('actions', () => {
+    test('should call onSubmit when submit button is clicked', async () => {
+      const homeTeamScore = await screen.findByPlaceholderText('homeTeamScore');
+      const awayTeamScore = await screen.findByPlaceholderText('awayTeamScore');
+
+      fireEvent.change(homeTeamScore, { target: { value: '3' } });
+      fireEvent.change(awayTeamScore, { target: { value: '3' } });
+      
+      const updateMatchButton = screen.getByText(/Submit/i);
+      fireEvent.click(updateMatchButton);
+
+      expect(onSubmitMock).toHaveBeenCalledWith(exampleUpdatedMatch);
+
+    })
+    test('should call cancel when cancel button is clicked', () => {
+      const cancelButton = screen.getByText(/Cancel/i);
+
+      fireEvent.click(cancelButton);
+      expect(onCancelMock).toHaveBeenCalled();
+    })
+  })
+
+})
+
