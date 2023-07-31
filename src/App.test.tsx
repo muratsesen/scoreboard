@@ -16,7 +16,7 @@ describe('App', () => {
     expect(title).toBeInTheDocument();
   })
 
-  test('renders "Start Match" button when no List is in progress', () => {
+  test('renders "Start Match" button when no Match is in progress', () => {
     render(<App />);
     const startMatchButton = screen.getByText(/Start Match/i);
     expect(startMatchButton).toBeInTheDocument();
@@ -279,6 +279,11 @@ describe('Summary', () => {
 
   const closeSummaryMock = jest.fn();
 
+  test('should show No matches found when there is no match', async () => {
+    render(<Summary matchList={[]} closeSummary={closeSummaryMock} />);
+    const noMatchFound = await screen.findByText(/No match yet/i);
+    expect(noMatchFound).toBeInTheDocument();
+  })
   beforeEach(() => {
     render(<Summary matchList={exampleMatchList} closeSummary={closeSummaryMock} />);
   })
@@ -328,12 +333,9 @@ describe('Summary', () => {
       // expect(homeTeamScore0).toHaveTextContent('0');
       // expect(awayTeamScore0).toHaveTextContent('5');
     })
-    xtest('should contain Finish button', () => {
-      const finishMatchButton = screen.getByText(/Finish/i);
-      expect(finishMatchButton).toBeInTheDocument();
-    })
-    xtest('should contain Update button', () => {
-      const updateMatchButton = screen.getByText(/Update/i);
+   
+    test('should contain Close button', () => {
+      const updateMatchButton = screen.getByText(/Close/i);
       expect(updateMatchButton).toBeInTheDocument();
     })
   })

@@ -3,7 +3,8 @@ import { MatchImpl, NewMatchFormProps, ScoreboardProps, Team, UpdateMatchFormPro
 
 function App() {
   const [showNewMatchForm, setShowNewMatchForm] = React.useState(false)
-  const [match, setMatch] = React.useState()
+  const [match, setMatch] = React.useState<MatchImpl | null>(null);
+  const [matchList,setMatchList] = React.useState([]); 
 
   function startMatch() {
 
@@ -107,6 +108,8 @@ export function Summary({ matchList, closeSummary }: { matchList: MatchImpl[], c
 
   //sort mach list according to totalScore and startDateTime
   //TODO: useMemo or useCallback
+
+  if(matchList.length === 0) return (<div>No match yet</div>)
   
   matchList.sort((a, b) => {
     if (a.totalScore() === b.totalScore()) {
