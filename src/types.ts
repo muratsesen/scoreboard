@@ -37,7 +37,7 @@ export interface ScoreboardProps {
       this.startDateTime = startDateTime; 
     }
   
-    totalScore?(): number {
+    totalScore(): number {
       return this.homeTeam.score + this.awayTeam.score;
     }
   }
