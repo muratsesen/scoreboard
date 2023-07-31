@@ -17,7 +17,7 @@ function App() {
     </div>
   );
 }
-
+export default App;
 
 export function NewMatchForm({ onSubmit, onCancel }: NewMatchFormProps) {
   const [homeTeam, setHomeTeam] = React.useState("")
@@ -54,7 +54,7 @@ export function NewMatchForm({ onSubmit, onCancel }: NewMatchFormProps) {
 }
 
 export function Scoreboard({ match, finishMatch, updateMatch }: ScoreboardProps) {
-  const {homeTeam,awayTeam} = match;
+  const { homeTeam, awayTeam } = match;
   return (
     <div>
       <div>
@@ -76,14 +76,14 @@ export function Scoreboard({ match, finishMatch, updateMatch }: ScoreboardProps)
   );
 }
 
-export function UpdateMatchForm({ onSubmit, onCancel,match }: UpdateMatchFormProps) {
+export function UpdateMatchForm({ onSubmit, onCancel, match }: UpdateMatchFormProps) {
   const [homeTeam, setHomeTeam] = React.useState<Team>(match.homeTeam)
   const [awayTeam, setAwayTeam] = React.useState<Team>(match.awayTeam)
 
   function submitMatch() {
-   
 
-    const exampleMatch: MatchImpl = new MatchImpl(homeTeam, awayTeam,match.startDateTime );
+
+    const exampleMatch: MatchImpl = new MatchImpl(homeTeam, awayTeam, match.startDateTime);
 
     onSubmit(exampleMatch);
   }
@@ -92,14 +92,43 @@ export function UpdateMatchForm({ onSubmit, onCancel,match }: UpdateMatchFormPro
     <div>
       <h2>Update Match</h2>
       <label htmlFor="homeTeam">{homeTeam.name}:
-        <input placeholder='homeTeamScore' value={homeTeam.score} onChange={(e) => setHomeTeam(prev=>({name:homeTeam.name,score:parseInt(e.target.value)}))} type="text" id="homeTeam" /></label>
+        <input placeholder='homeTeamScore' value={homeTeam.score} onChange={(e) => setHomeTeam(prev => ({ name: homeTeam.name, score: parseInt(e.target.value) }))} type="text" id="homeTeam" /></label>
 
       <label htmlFor="awayTeam">{awayTeam.name}:
-        <input placeholder='awayTeamScore' value={awayTeam.score} onChange={(e) => setAwayTeam(prev=>({...prev,score:parseInt(e.target.value)}))} type="text" id="awayTeam" /></label>
+        <input placeholder='awayTeamScore' value={awayTeam.score} onChange={(e) => setAwayTeam(prev => ({ ...prev, score: parseInt(e.target.value) }))} type="text" id="awayTeam" /></label>
 
       <button onClick={submitMatch} >Submit</button>
       <button onClick={onCancel}>Cancel</button>
     </div>
   )
 }
-export default App;
+
+export function Summary({ matchList, closeSummary }: { matchList: MatchImpl[], closeSummary: () => void }) {
+
+  //sort mach list according to totalScore and startDateTime
+  //TODO: useMemo or useCallback
+  
+  matchList.sort((a, b) => {
+    if (a.totalScore() === b.totalScore()) {
+      return a.startDateTime.getTime() - b.startDateTime.getTime();
+    }
+    return b.totalScore() - a.totalScore();
+  })
+  return (
+    <div>
+      <h2>Summary</h2>
+      {matchList.map((match, index) => (
+        <div key={match.startDateTime.toLocaleDateString()}>
+          <span>{index + 1}-</span>
+          <span data-testid={`homeTeamName-${index}`}>{match.homeTeam.name}</span>
+          <span data-testid={`homeTeamScore-${index}`}>{match.homeTeam.score}</span>
+          -
+          <span data-testid={`awayTeamName-${index}`}>{match.awayTeam.name}</span>
+          <span data-testid={`awayTeamScore-${index}`}> {match.awayTeam.score}</span>
+        </div>
+      ))}
+
+      <button onClick={closeSummary}>Close</button>
+    </div>
+  )
+}

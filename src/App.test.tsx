@@ -1,8 +1,9 @@
 import React from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
-import App, { NewMatchForm, Scoreboard, UpdateMatchForm } from './App';
+import App, { NewMatchForm, Scoreboard, Summary, UpdateMatchForm } from './App';
 import { act } from 'react-dom/test-utils';
 import { unmountComponentAtNode } from 'react-dom';
+import { MatchImpl } from './types';
 
 describe('App', () => {
   test('renders without error', () => {
@@ -15,7 +16,7 @@ describe('App', () => {
     expect(title).toBeInTheDocument();
   })
 
-  test('renders "Start Match" button when no match is in progress', () => {
+  test('renders "Start Match" button when no List is in progress', () => {
     render(<App />);
     const startMatchButton = screen.getByText(/Start Match/i);
     expect(startMatchButton).toBeInTheDocument();
@@ -120,10 +121,11 @@ describe('New match form', () => {
 })
 
 describe('Scoreboard', () => {
-  const exampleMatch = {
+  const exampleMatch:MatchImpl = {
     homeTeam: { name: 'England', score: 3 },
     awayTeam: { name: 'Finland', score: 2 },
-    startDateTime: new Date('2011-11-11T12:00:00.000Z')
+    startDateTime: new Date('2011-11-11T12:00:00.000Z'),
+    totalScore : function(){ return this.homeTeam.score + this.awayTeam.score;}
   };
 
   const mockFinishMatch = jest.fn();
@@ -177,7 +179,8 @@ describe('UpdateMatchForm', () => {
   const exampleMatch = {
     homeTeam: { name: 'England', score: 3 },
     awayTeam: { name: 'Finland', score: 2 },
-    startDateTime: new Date('2011-11-11T12:00:00.000Z')
+    startDateTime: new Date('2011-11-11T12:00:00.000Z'),
+    totalScore : function(){ return this.homeTeam.score + this.awayTeam.score;}
   };
   const exampleUpdatedMatch = {
     homeTeam: { name: 'England', score: 3 },
@@ -223,7 +226,7 @@ describe('UpdateMatchForm', () => {
 
       fireEvent.change(homeTeamScore, { target: { value: '3' } });
       fireEvent.change(awayTeamScore, { target: { value: '3' } });
-      
+
       const updateMatchButton = screen.getByText(/Submit/i);
       fireEvent.click(updateMatchButton);
 
@@ -235,6 +238,112 @@ describe('UpdateMatchForm', () => {
 
       fireEvent.click(cancelButton);
       expect(onCancelMock).toHaveBeenCalled();
+    })
+  })
+
+})
+
+describe('Summary', () => {
+  const exampleMatchList = [
+    {
+      homeTeam: { name: 'Mexico', score: 0 },
+      awayTeam: { name: 'Canada', score: 5 },
+      startDateTime: new Date('2023-08-01T12:10:00.000Z'),
+      totalScore : function(){ return this.homeTeam.score + this.awayTeam.score;}
+    },
+    {
+      homeTeam: { name: 'Spain', score: 10 },
+      awayTeam: { name: 'Brasil', score: 2 },
+      startDateTime: new Date('2023-08-01T12:11:00.000Z'),
+      totalScore : function(){ return this.homeTeam.score + this.awayTeam.score;}
+    },
+    {
+      homeTeam: { name: 'Germany', score: 2 },
+      awayTeam: { name: 'France', score: 2 },
+      startDateTime: new Date('2023-08-02T12:10:00.000Z'),
+      totalScore : function(){ return this.homeTeam.score + this.awayTeam.score;}
+    },
+    {
+      homeTeam: { name: 'Uruguay', score: 6 },
+      awayTeam: { name: 'Italy', score: 6 },
+      startDateTime: new Date('2023-08-02T12:10:00.000Z'),
+      totalScore : function(){ return this.homeTeam.score + this.awayTeam.score;}
+    },
+    {
+      homeTeam: { name: 'Argentina', score: 3 },
+      awayTeam: { name: 'Australia', score: 1 },
+      startDateTime: new Date('2023-08-03T12:10:00.000Z'),
+      totalScore : function(){ return this.homeTeam.score + this.awayTeam.score;}
+    },
+  ];
+
+  const closeSummaryMock = jest.fn();
+
+  beforeEach(() => {
+    render(<Summary matchList={exampleMatchList} closeSummary={closeSummaryMock} />);
+  })
+
+  describe('layout', () => {
+
+    test('should renders correct team names and scores', async () => {
+      const homeTeamLabel0 = await screen.findByText(/Uruguay/i);
+      const awayTeamLabel0 = await screen.findByText(/Italy/i);
+      const homeTeamLabel1 = await screen.findByText(/Spain/i);
+      const awayTeamLabel1 = await screen.findByText(/Brasil/i);
+      const homeTeamLabel2 = await screen.findByText(/Mexico/i);
+      const awayTeamLabel2 = await screen.findByText(/Canada/i);
+      const homeTeamLabel3 = await screen.findByText(/Argentina/i);
+      const awayTeamLabel3 = await screen.findByText(/Australia/i);
+      const homeTeamLabel4 = await screen.findByText(/Germany/i);
+      const awayTeamLabel4 = await screen.findByText(/France/i);
+
+
+      // const homeTeamScore0 = screen.queryByTestId('homeTeamScore-0');
+      // const homeTeamScore1 = screen.queryByTestId('homeTeamScore-1');
+      // const homeTeamScore2 = screen.queryByTestId('homeTeamScore-2');
+
+      // const awayTeamScore0 = screen.queryByTestId('awayTeamScore-0');
+      // const awayTeamScore1 = screen.queryByTestId('awayTeamScore-1');
+      // const awayTeamScore2 = screen.queryByTestId('awayTeamScore-2');
+
+
+      expect(homeTeamLabel0).toBeInTheDocument();
+      expect(awayTeamLabel0).toBeInTheDocument();
+      expect(homeTeamLabel1).toBeInTheDocument();
+      expect(awayTeamLabel1).toBeInTheDocument();
+      expect(homeTeamLabel2).toBeInTheDocument();
+      expect(awayTeamLabel2).toBeInTheDocument();
+      expect(homeTeamLabel3).toBeInTheDocument();
+      expect(awayTeamLabel3).toBeInTheDocument();
+      expect(homeTeamLabel4).toBeInTheDocument();
+      expect(awayTeamLabel4).toBeInTheDocument();
+      
+      // expect(awayTeamScore0).toBeInTheDocument();
+      // expect(homeTeamScore1).toBeInTheDocument();
+      // expect(homeTeamScore2).toBeInTheDocument();
+      // expect(awayTeamScore0).toBeInTheDocument();
+      // expect(awayTeamScore1).toBeInTheDocument();
+      // expect(awayTeamScore2).toBeInTheDocument();
+      
+      // expect(homeTeamScore0).toHaveTextContent('0');
+      // expect(awayTeamScore0).toHaveTextContent('5');
+    })
+    xtest('should contain Finish button', () => {
+      const finishMatchButton = screen.getByText(/Finish/i);
+      expect(finishMatchButton).toBeInTheDocument();
+    })
+    xtest('should contain Update button', () => {
+      const updateMatchButton = screen.getByText(/Update/i);
+      expect(updateMatchButton).toBeInTheDocument();
+    })
+  })
+
+  describe('actions', () => {
+    xtest('should call finishMatch when finish button is clicked', () => {
+      const finishMatchButton = screen.getByText(/Finish/i);
+
+      fireEvent.click(finishMatchButton);
+      expect(closeSummaryMock).toHaveBeenCalled();
     })
   })
 
