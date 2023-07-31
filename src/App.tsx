@@ -1,12 +1,12 @@
 import React from 'react';
-import { MatchImpl, NewMatchFormProps } from './types';
+import { MatchImpl, NewMatchFormProps, ScoreboardProps } from './types';
 
 function App() {
   const [showNewMatchForm, setShowNewMatchForm] = React.useState(false)
   const [match, setMatch] = React.useState()
 
   function startMatch() {
-   
+
   }
   return (
     <div>
@@ -33,7 +33,7 @@ export function NewMatchForm({ onSubmit, onCancel }: NewMatchFormProps) {
       score: 0
     };
 
-    const exampleMatch: MatchImpl = new MatchImpl( _homeTeam, _awayTeam, new Date('2011-11-11T12:00:00.000Z'));
+    const exampleMatch: MatchImpl = new MatchImpl(_homeTeam, _awayTeam, new Date('2011-11-11T12:00:00.000Z'));
 
     onSubmit(exampleMatch);
   }
@@ -52,5 +52,29 @@ export function NewMatchForm({ onSubmit, onCancel }: NewMatchFormProps) {
     </div>
   )
 }
+
+export function Scoreboard({ match, finishMatch, updateMatch }: ScoreboardProps) {
+  const {homeTeam,awayTeam} = match;
+  return (
+    <div>
+      <div>
+        <label>
+          {homeTeam.name}
+          <span>{homeTeam.score}</span>
+        </label>
+      </div>
+      <div>
+        <label>
+          {awayTeam.name}
+          <span>{awayTeam.score}</span>
+        </label>
+      </div>
+
+      <button onClick={finishMatch}>Finish</button>
+      <button onClick={updateMatch}>Update</button>
+    </div>
+  );
+}
+
 
 export default App;

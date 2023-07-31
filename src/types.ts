@@ -1,13 +1,17 @@
 export interface NewMatchFormProps {
-    onSubmit: (match: Match) => void;
+    onSubmit: (match: MatchImpl) => void;
     onCancel: () => void;
+  }
+export interface ScoreboardProps {
+    match: MatchImpl;
+    finishMatch: () => void;
+    updateMatch: () => void;
   }
 
   export interface Match {
     homeTeam: Team;
     awayTeam: Team;
     startDateTime: Date;
-    totalScore(): number;
   }
   export interface Team {
     name: string;
@@ -28,7 +32,7 @@ export interface NewMatchFormProps {
       this.startDateTime = startDateTime; 
     }
   
-    totalScore(): number {
+    totalScore?(): number {
       return this.homeTeam.score + this.awayTeam.score;
     }
   }

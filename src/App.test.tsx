@@ -1,6 +1,6 @@
 import React from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
-import App, { NewMatchForm } from './App';
+import App, { NewMatchForm, Scoreboard } from './App';
 import { act } from 'react-dom/test-utils';
 import { unmountComponentAtNode } from 'react-dom';
 
@@ -123,12 +123,17 @@ describe('Scoreboard', () => {
   const exampleMatch = {
     homeTeam: { name: 'England', score: 3 },
     awayTeam: { name: 'Finland', score: 2 },
+    startDateTime: new Date('2011-11-11T12:00:00.000Z')
   };
 
   const mockFinishMatch = jest.fn();
   const mockUpdateMatch = jest.fn();
+  beforeEach(() => {
+    render(<Scoreboard match={exampleMatch} finishMatch={mockFinishMatch} updateMatch={mockUpdateMatch} />);
+  })
 
   describe('layout', () => {
+
     test('renders correct team names and scores', () => {
       const homeTeamLabel = screen.getByText('England');
       const homeTeamScore = screen.getByText('3');
@@ -141,19 +146,28 @@ describe('Scoreboard', () => {
       expect(awayTeamScore).toBeInTheDocument();
     })
     test('should contain Finish button', () => {
-      expect(true).toBe(false);
+      const finishMatchButton = screen.getByText(/Finish/i);
+      expect(finishMatchButton).toBeInTheDocument();
     })
     test('should contain Update button', () => {
-      expect(true).toBe(false);
+      const updateMatchButton = screen.getByText(/Update/i);
+      expect(updateMatchButton).toBeInTheDocument();
     })
   })
 
   describe('actions', () => {
     test('should call finishMatch when finish button is clicked', () => {
-      expect(true).toBe(false);
+      const finishMatchButton = screen.getByText(/Finish/i);
+
+      fireEvent.click(finishMatchButton);
+      expect(mockFinishMatch).toHaveBeenCalled();
     })
     test('should call updateMatch when update button is clicked', () => {
-      expect(true).toBe(false);
+      const updateMatchButton = screen.getByText(/Update/i);
+
+      fireEvent.click(updateMatchButton);
+      expect(mockUpdateMatch).toHaveBeenCalled();
+    
     })
   })
 
