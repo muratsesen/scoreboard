@@ -45,18 +45,18 @@ describe('New match form', () => {
       const homeTeamInput = screen.getByLabelText(/Home Team/i);
       expect(homeTeamInput).toBeInTheDocument();
     })
-    
+
     test('renders "Away Team" input', () => {
       const awayTeamInput = screen.getByLabelText(/Away Team/i);
       expect(awayTeamInput).toBeInTheDocument();
     })
-    
-    
+
+
     test('renders "Submit" button', () => {
       const submitButton = screen.getByText(/Submit/i);
       expect(submitButton).toBeInTheDocument();
     })
-    
+
     test('renders "Cancel" button', () => {
       const cancelButton = screen.getByText(/Cancel/i);
       expect(cancelButton).toBeInTheDocument();
@@ -64,8 +64,8 @@ describe('New match form', () => {
   })
 
   describe('actions', () => {
-   
-    beforeEach(()=>{
+
+    beforeEach(() => {
       render(<NewMatchForm onCancel={onCancelMock} onSubmit={onSubmitMock} />);
     })
     test('renders Submit button disabled when input fields are empty', () => {
@@ -113,8 +113,48 @@ describe('New match form', () => {
       const cancelButton = await screen.findByText(/Cancel/i);
       fireEvent.click(cancelButton);
       expect(onCancelMock).toHaveBeenCalled();
-  })
+    })
   })
 
+
+})
+
+describe('Scoreboard', () => {
+  const exampleMatch = {
+    homeTeam: { name: 'England', score: 3 },
+    awayTeam: { name: 'Finland', score: 2 },
+  };
+
+  const mockFinishMatch = jest.fn();
+  const mockUpdateMatch = jest.fn();
+
+  describe('layout', () => {
+    test('renders correct team names and scores', () => {
+      const homeTeamLabel = screen.getByText('England');
+      const homeTeamScore = screen.getByText('3');
+      const awayTeamLabel = screen.getByText('Finland');
+      const awayTeamScore = screen.getByText('2');
+
+      expect(homeTeamLabel).toBeInTheDocument();
+      expect(homeTeamScore).toBeInTheDocument();
+      expect(awayTeamLabel).toBeInTheDocument();
+      expect(awayTeamScore).toBeInTheDocument();
+    })
+    test('should contain Finish button', () => {
+      expect(true).toBe(false);
+    })
+    test('should contain Update button', () => {
+      expect(true).toBe(false);
+    })
+  })
+
+  describe('actions', () => {
+    test('should call finishMatch when finish button is clicked', () => {
+      expect(true).toBe(false);
+    })
+    test('should call updateMatch when update button is clicked', () => {
+      expect(true).toBe(false);
+    })
+  })
 
 })
